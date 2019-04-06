@@ -4,31 +4,40 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helper\ResponseHelper;
-use App\Model\Settings;
+use App\Model\Posts;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class SettingsController extends Controller
+class PostsController extends Controller
 {
-    protected $settings;
-
-    public function __construct(Settings $settings)
-    {
-        $this->settings = $settings;
-    }
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, Response $response)
     {
-        try {
-            return ['success' => true, 'settings' => $this->settings->getAllToArray()];
-        } catch (\Exception $ex) {
-            return ['error' => true, 'errorMsg' => $ex->getMessage(), 'settings' => []];
+        $responseHelper = new ResponseHelper($response);
+        $postQuery = Posts::query();
+
+        $sorting = $request->get('sort');
+        if (!empty($sorting)) {
+            list($column, $direction) = explode("|", $sorting);
+
+            $postQuery->orderByColumn($column, $direction);
         }
+
+        $limit = $request->get('per_page');
+        if (empty($limit)) {
+            $limit = 10;
+        }
+
+        $filter = $request->get('filter');
+        if (!empty($filter)) {
+            $postQuery->search($filter);
+        }
+
+        return $postQuery->paginate($limit);
     }
 
     /**
@@ -37,30 +46,9 @@ class SettingsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Response $response)
+    public function store(Request $request)
     {
-        $request->validate([
-            'pageTitle' => 'required|max:255',
-        ]);
-
-        $response = new ResponseHelper($response);
-        $settings = $request->all();
-
-        try {
-            foreach ($settings as $key => $value) {
-                $this->settings->saveSetting($key, $value);
-            }
-        } catch (\Exception $ex) {
-            return $response
-                ->setMsg($ex->getMessage())
-                ->error()
-                ->get();
-        }
-
-        return $response
-            ->setMsg('Settings saved succesfully')
-            ->success()
-            ->get();
+        //
     }
 
     /**

@@ -21,12 +21,16 @@
         "sass": "^1.15.2",
         "sass-loader": "^7.1.0",
         "vue": "^2.5.17",
-        "vue-template-compiler": "^2.6.10"
+        "vue-template-compiler": "^2.6.10",
+        "vuetable-2": "^1.7.5"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.8.1",
         "admin-lte": "^3.0.0-alpha.2",
+        "npm": "^6.9.0",
+        "sweetalert2": "^8.8.1",
         "vform": "^1.0.0",
+        "vue-events": "^3.1.0",
         "vue-router": "^3.0.2"
     }
 }

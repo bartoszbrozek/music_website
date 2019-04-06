@@ -60,6 +60,15 @@
           </li>
 
           <li class="nav-item">
+              <router-link to="/posts" class="nav-link">
+                <i class="nav-icon fa fa-list"></i>
+                <p>
+                  Posts
+                </p>
+              </router-link>
+          </li>
+
+          <li class="nav-item">
               <router-link to="/settings" class="nav-link">
                 <i class="nav-icon fa fa-cog"></i>
                 <p>
@@ -111,6 +120,8 @@
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.js" charset="utf-8"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>

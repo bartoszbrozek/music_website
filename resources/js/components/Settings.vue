@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <form @submit.prevent="updateSettings" @keydown="form.onKeydown($event)">
           <div class="form-group">
-            <label for="pageTitle">Page Title</label>
+            <label for="pageTitle">Settings</label>
             <input
               v-model="form.pageTitle"
               type="text"
@@ -36,7 +36,20 @@ export default {
   },
   methods: {
     updateSettings() {
-      this.form.post("/api/settings");
+      this.form
+        .post("/api/settings")
+        .then(({ data }) => {
+          Toast.fire({
+            type: data.type,
+            title: data.msg
+          });
+        })
+        .catch(error => {
+          Toast.fire({
+            type: 'error',
+            title: error.response.data.message
+          });
+        });
     },
     loadSettings() {
       axios
