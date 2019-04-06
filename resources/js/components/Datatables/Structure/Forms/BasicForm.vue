@@ -1,27 +1,32 @@
 <template>
   <form @submit.prevent="submitForm" @keydown="form.onKeydown($event)">
-    <div class="form-group">
-      <label for="title">Title</label>
-      <input
-        v-model="form.title"
-        type="text"
-        name="title"
-        class="form-control"
-        :class="{ 'is-invalid': form.errors.has('title') }"
-      >
-      <has-error :form="form" field="pageTitle"></has-error>
+    <div class="form-group" v-for="field in settings.form.fields" v-bind:key="field.name">
+      <!-- TEXT FIELD -->
+      <div v-if="field.type === 'text' || field.type === 'password' || field.type === 'number'">
+        <label for="title" v-html="field.title"></label>
+        <input
+          v-model="form[field.name]"
+          :type="field.type"
+          :name="field.name"
+          class="form-control"
+          :class="{ 'is-invalid': form.errors.has(field.name) }"
+        >
+        <has-error :form="form" :field="field.name"></has-error>
+      </div>
+      <!-- TEXTAREA FIELD -->
+      <div v-else-if="field.type === 'textarea'">
+        <label for="title" v-html="field.title"></label>
+        <textarea
+          v-model="form[field.name]"
+          :type="field.type"
+          :name="field.name"
+          class="form-control"
+          :class="{ 'is-invalid': form.errors.has(field.name) }"
+        ></textarea>
+        <has-error :form="form" :field="field.name"></has-error>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="title">Content</label>
-      <input
-        v-model="form.content"
-        type="text"
-        name="content"
-        class="form-control"
-        :class="{ 'is-invalid': form.errors.has('title') }"
-      >
-      <has-error :form="form" field="pageTitle"></has-error>
-    </div>
+
     <button :disabled="form.busy" type="submit" class="btn btn-primary">Confirm</button>
   </form>
 </template>
@@ -30,11 +35,16 @@
 export default {
   data() {
     return {
-      form: new Form({
-        title: "",
-        content: ""
-      })
+      form: {}
     };
+  },
+  created() {
+    let fields = {};
+    this.settings.form.fields.forEach(field => {
+      fields[field.name] = "";
+    });
+
+    this.form = new Form(fields);
   },
   methods: {
     submitForm() {
@@ -46,11 +56,11 @@ export default {
             title: data.msg
           });
 
-          $("#" + this.settings.id).modal('hide')
-          this.$root.$emit('form-submitted-success')
+          $("#" + this.settings.id).modal("hide");
+          this.$root.$emit("form-submitted-success");
         })
         .catch(error => {
-            console.log(error)
+          console.log(error);
           Toast.fire({
             type: "error",
             title: error.response.data.message

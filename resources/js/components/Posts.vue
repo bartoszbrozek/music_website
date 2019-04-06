@@ -68,17 +68,24 @@ export default {
         id: "modal_create_new_post",
         title: "Create New Post",
         form: {
-          submit() {
-            console.log(666)
-          }
+          fields: [
+            {
+              title: "Title",
+              name: "title",
+              type: "text"
+            },
+            {
+              title: "Content",
+              name: "content",
+              type: "textarea"
+            }
+          ]
         }
       }
     };
   },
   methods: {
-    createPost() {
-
-    }
+    createPost() {}
   }
 };
 </script>

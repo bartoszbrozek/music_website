@@ -2088,14 +2088,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      form: new Form({
-        title: "",
-        content: ""
-      })
+      form: {}
     };
+  },
+  created: function created() {
+    var fields = {};
+    this.settings.form.fields.forEach(function (field) {
+      fields[field.name] = "";
+    });
+    this.form = new Form(fields);
   },
   methods: {
     submitForm: function submitForm() {
@@ -2107,9 +2116,9 @@ __webpack_require__.r(__webpack_exports__);
           type: data.type,
           title: data.msg
         });
-        $("#" + _this.settings.id).modal('hide');
+        $("#" + _this.settings.id).modal("hide");
 
-        _this.$root.$emit('form-submitted-success');
+        _this.$root.$emit("form-submitted-success");
       }).catch(function (error) {
         console.log(error);
         Toast.fire({
@@ -2300,9 +2309,15 @@ __webpack_require__.r(__webpack_exports__);
         id: "modal_create_new_post",
         title: "Create New Post",
         form: {
-          submit: function submit() {
-            console.log(666);
-          }
+          fields: [{
+            title: "Title",
+            name: "title",
+            type: "text"
+          }, {
+            title: "Content",
+            name: "content",
+            type: "textarea"
+          }]
         }
       }
     };
@@ -44654,73 +44669,164 @@ var render = function() {
       }
     },
     [
-      _c(
-        "div",
-        { staticClass: "form-group" },
-        [
-          _c("label", { attrs: { for: "title" } }, [_vm._v("Title")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.form.title,
-                expression: "form.title"
-              }
-            ],
-            staticClass: "form-control",
-            class: { "is-invalid": _vm.form.errors.has("title") },
-            attrs: { type: "text", name: "title" },
-            domProps: { value: _vm.form.title },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.form, "title", $event.target.value)
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("has-error", { attrs: { form: _vm.form, field: "pageTitle" } })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "form-group" },
-        [
-          _c("label", { attrs: { for: "title" } }, [_vm._v("Content")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.form.content,
-                expression: "form.content"
-              }
-            ],
-            staticClass: "form-control",
-            class: { "is-invalid": _vm.form.errors.has("title") },
-            attrs: { type: "text", name: "content" },
-            domProps: { value: _vm.form.content },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.form, "content", $event.target.value)
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("has-error", { attrs: { form: _vm.form, field: "pageTitle" } })
-        ],
-        1
-      ),
+      _vm._l(_vm.settings.form.fields, function(field) {
+        return _c("div", { key: field.name, staticClass: "form-group" }, [
+          field.type === "text" ||
+          field.type === "password" ||
+          field.type === "number"
+            ? _c(
+                "div",
+                [
+                  _c("label", {
+                    attrs: { for: "title" },
+                    domProps: { innerHTML: _vm._s(field.title) }
+                  }),
+                  _vm._v(" "),
+                  field.type === "checkbox"
+                    ? _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form[field.name],
+                            expression: "form[field.name]"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.form.errors.has(field.name)
+                        },
+                        attrs: { name: field.name, type: "checkbox" },
+                        domProps: {
+                          checked: Array.isArray(_vm.form[field.name])
+                            ? _vm._i(_vm.form[field.name], null) > -1
+                            : _vm.form[field.name]
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.form[field.name],
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.form,
+                                    field.name,
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.form,
+                                    field.name,
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.form, field.name, $$c)
+                            }
+                          }
+                        }
+                      })
+                    : field.type === "radio"
+                    ? _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form[field.name],
+                            expression: "form[field.name]"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.form.errors.has(field.name)
+                        },
+                        attrs: { name: field.name, type: "radio" },
+                        domProps: {
+                          checked: _vm._q(_vm.form[field.name], null)
+                        },
+                        on: {
+                          change: function($event) {
+                            return _vm.$set(_vm.form, field.name, null)
+                          }
+                        }
+                      })
+                    : _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form[field.name],
+                            expression: "form[field.name]"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        class: {
+                          "is-invalid": _vm.form.errors.has(field.name)
+                        },
+                        attrs: { name: field.name, type: field.type },
+                        domProps: { value: _vm.form[field.name] },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.form, field.name, $event.target.value)
+                          }
+                        }
+                      }),
+                  _vm._v(" "),
+                  _c("has-error", {
+                    attrs: { form: _vm.form, field: field.name }
+                  })
+                ],
+                1
+              )
+            : field.type === "textarea"
+            ? _c(
+                "div",
+                [
+                  _c("label", {
+                    attrs: { for: "title" },
+                    domProps: { innerHTML: _vm._s(field.title) }
+                  }),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.form[field.name],
+                        expression: "form[field.name]"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.form.errors.has(field.name) },
+                    attrs: { type: field.type, name: field.name },
+                    domProps: { value: _vm.form[field.name] },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.form, field.name, $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("has-error", {
+                    attrs: { form: _vm.form, field: field.name }
+                  })
+                ],
+                1
+              )
+            : _vm._e()
+        ])
+      }),
       _vm._v(" "),
       _c(
         "button",
@@ -44730,7 +44836,8 @@ var render = function() {
         },
         [_vm._v("Confirm")]
       )
-    ]
+    ],
+    2
   )
 }
 var staticRenderFns = []
