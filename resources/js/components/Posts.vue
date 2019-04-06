@@ -10,33 +10,8 @@
           :append-params="moreParams"
           :showFilterBar="showFilterBar"
           :showCreateButton="showCreateButton"
+          :createModalSettings="createModalSettings"
         ></posts-datatable>
-
-        <form @submit.prevent="createPost" @keydown="form.onKeydown($event)">
-          <div class="form-group">
-            <label for="title">Title</label>
-            <input
-              v-model="form.title"
-              type="text"
-              name="title"
-              class="form-control"
-              :class="{ 'is-invalid': form.errors.has('title') }"
-            >
-            <has-error :form="form" field="pageTitle"></has-error>
-          </div>
-          <div class="form-group">
-            <label for="title">Content</label>
-            <input
-              v-model="form.title"
-              type="text"
-              name="content"
-              class="form-control"
-              :class="{ 'is-invalid': form.errors.has('title') }"
-            >
-            <has-error :form="form" field="pageTitle"></has-error>
-          </div>
-          <button :disabled="form.busy" type="submit" class="btn btn-primary">Create</button>
-        </form>
       </div>
     </div>
   </div>
@@ -50,11 +25,6 @@ export default {
   },
   data() {
     return {
-      posts: {},
-      form: new Form({
-        title: "",
-        content: ""
-      }),
       tableTitle: "Posts",
       apiUrl: "/api/posts",
       fields: [
@@ -88,30 +58,26 @@ export default {
         {
           field: "id",
           sortField: "id",
-          direction: "asc"
+          direction: "desc"
         }
       ],
       moreParams: {},
       showFilterBar: true,
-      showCreateButton: true
+      showCreateButton: true,
+      createModalSettings: {
+        id: "modal_create_new_post",
+        title: "Create New Post",
+        form: {
+          submit() {
+            console.log(666)
+          }
+        }
+      }
     };
   },
   methods: {
     createPost() {
-      this.form
-        .post("/api/posts")
-        .then(({ data }) => {
-          Toast.fire({
-            type: data.type,
-            title: data.msg
-          });
-        })
-        .catch(error => {
-          Toast.fire({
-            type: "error",
-            title: error.response.data.message
-          });
-        });
+
     }
   }
 };

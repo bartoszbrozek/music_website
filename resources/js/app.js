@@ -35,6 +35,8 @@ Vue.use(VueRouter)
 // Vue Events
 import VueEvents from "vue-events";
 Vue.use(VueEvents);
+var Events = new Vue({});
+window.Events = Events;
 
 /**
  * Define routes and components

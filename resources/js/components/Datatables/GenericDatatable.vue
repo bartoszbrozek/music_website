@@ -15,7 +15,7 @@
               <div class="col-sm-12">
                 <div class="row md-3">
                   <filter-bar v-if="showFilterBar"></filter-bar>
-                  <button-create v-if="showCreateButton"></button-create>
+                  <button-create v-if="showCreateButton" :settings="createModalSettings"></button-create>
                 </div>
                 <vuetable
                   ref="vuetable"
@@ -41,6 +41,7 @@
         </div>
       </div>
     </div>
+    <modal-basic :settings="createModalSettings"></modal-basic>
   </div>
 </template>
 
@@ -49,13 +50,15 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 import VuetablePaginationBootstrap from "./Structure/VuetablePaginationBootstrap";
 import FilterBar from "./Structure/Filter";
 import ButtonCreate from "./Structure/Buttons/Create";
+import ModalBasic from "./Structure/Modals/BasicModal";
 
 export default {
   components: {
     Vuetable,
     VuetablePaginationBootstrap,
     FilterBar,
-    ButtonCreate
+    ButtonCreate,
+    ModalBasic
   },
   props: {
     tableTitle: {
@@ -92,6 +95,10 @@ export default {
     showCreateButton: {
       type: Boolean,
       required: true
+    },
+    createModalSettings: {
+      type: Object,
+      required: true
     }
   },
   data() {
@@ -100,6 +107,7 @@ export default {
   mounted() {
     this.$events.$on("filter-set", eventData => this.onFilterSet(eventData));
     this.$events.$on("filter-reset", e => this.onFilterReset());
+    this.$root.$on("form-submitted-success", e => this.onFormSubmitted());
   },
   methods: {
     onPaginationData(paginationData) {
@@ -122,6 +130,9 @@ export default {
     onFilterReset() {
       delete this.appendParams.filter;
       Vue.nextTick(() => this.$refs.vuetable.refresh());
+    },
+    onFormSubmitted() {
+      this.$refs.vuetable.refresh();
     }
   }
 };

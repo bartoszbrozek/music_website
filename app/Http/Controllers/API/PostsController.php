@@ -15,9 +15,8 @@ class PostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Response $response)
+    public function index(Request $request)
     {
-        $responseHelper = new ResponseHelper($response);
         $postQuery = Posts::query();
 
         $sorting = $request->get('sort');
@@ -46,9 +45,22 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Response $response)
     {
-        //
+        $request->validate(
+            [
+                'title' => 'required|max:255',
+                'content' => 'required|max:65550',
+            ]
+        );
+        $post = new Posts();
+
+        $post->title = $request['title'];
+        $post->content = $request['content'];
+        $post->save();
+
+        $responseHelper = new ResponseHelper($response);
+        return $responseHelper->success()->setMsg("Post created succesfully")->get();
     }
 
     /**
