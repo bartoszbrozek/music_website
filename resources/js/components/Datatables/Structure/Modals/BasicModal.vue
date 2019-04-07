@@ -10,7 +10,18 @@
         </div>
         <div class="modal-body">
           <p v-if="settings.contentText" v-html="settings.contentText"></p>
-          <form-basic :settings="settings"></form-basic>
+          <form-basic :settings="settings" v-if="settings.form"></form-basic>
+
+          <div v-if="settings.contentData">
+            <div v-for="(value, propertyName) in settings.contentData" v-bind:key="propertyName" class="row">
+              <div class="col-sm-12">
+                <h4 v-html="propertyName"></h4>
+              </div>
+              <div class="col-sm-12">
+                <p v-html="value"></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -18,12 +29,12 @@
 </template>
 
 <script>
-import FormBasic from "./../Forms/BasicForm"
+import FormBasic from "./../Forms/BasicForm";
 
 export default {
-    components: {
-        FormBasic
-    },
+  components: {
+    FormBasic
+  },
   props: {
     settings: {
       type: Object,

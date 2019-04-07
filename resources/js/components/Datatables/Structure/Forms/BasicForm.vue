@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submitForm" @keydown="form.onKeydown($event)">
+  <form @submit.prevent="submitForm" @keydown="form.onKeydown($event)" v-if="settings.form">
     <div class="form-group" v-for="field in settings.form.fields" v-bind:key="field.name">
       <!-- TEXT FIELD -->
       <div v-if="field.type === 'text' || field.type === 'password' || field.type === 'number'">
@@ -35,21 +35,52 @@
 export default {
   data() {
     return {
-      form: {}
+      form: new Form(this.getFields())
     };
   },
-  created() {
-    let fields = {};
-    this.settings.form.fields.forEach(field => {
-      fields[field.name] = "";
-    });
-
-    this.form = new Form(fields);
+  mounted() {
+    var self = this;
+    if (typeof this.settings.event !== "undefined") {
+      this.$root.$on(this.settings.event, e => this.onFormDataEvent(e));
+    }
   },
+  created() {},
   methods: {
+    onFormDataEvent(data) {
+      if (typeof data.form !== "undefined") {
+        this.settings.form.fields = data.form.fields;
+        this.setForm();
+      }
+    },
+    getFields() {
+      let fields = {};
+      this.settings.form.fields.forEach(field => {
+        fields[field.name] = field.value;
+      });
+
+      return fields;
+    },
+    setForm() {
+      this.form = new Form(this.getFields());
+    },
     submitForm() {
-      this.form
-        .post("/api/posts")
+      let request = null;
+      let endpoint = this.settings.form.endpoint;
+      switch (this.settings.form.method) {
+        case "POST":
+          request = this.form.post(endpoint);
+          break;
+
+        case "PUT":
+          request = this.form.put(endpoint);
+          break;
+
+        default:
+          request = this.form.post(endpoint);
+          break;
+      }
+
+      request
         .then(({ data }) => {
           Toast.fire({
             type: data.type,

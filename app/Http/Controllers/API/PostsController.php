@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Helper\ResponseHelper;
 use App\Model\Posts;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -69,9 +70,20 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Response $response)
     {
-        //
+        try {
+            $post = Posts::find($id);
+
+            if (empty($post)) {
+                throw new Exception("Could not get post by id = {$id}");
+            }
+
+            return $post;
+        } catch (Exception $ex) {
+            $responseHelper = new ResponseHelper($response);
+            return $responseHelper->error()->setMsg($ex->getMessage())->get();
+        }
     }
 
     /**
@@ -81,9 +93,25 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, Response $response)
     {
-        //
+        $responseHelper = new ResponseHelper($response);
+
+        try {
+            $post = Posts::find($id);
+
+            if (empty($post)) {
+                throw new Exception("Could not update post by id = {$id}");
+            }
+
+            $post->title = $request['title'];
+            $post->content = $request['content'];
+            $post->save();
+        } catch (Exception $ex) {
+            return $responseHelper->error()->setMsg($ex->getMessage())->get();
+        }
+
+        return $responseHelper->success()->setMsg("Post updated succesfully")->get();
     }
 
     /**

@@ -26,7 +26,15 @@
                   :sort-order="sortOrder"
                   :append-params="appendParams"
                   @vuetable:pagination-data="onPaginationData"
-                ></vuetable>
+                >
+                  <custom-actions
+                    slot="actions"
+                    slot-scope="props"
+                    :rowData="props"
+                    :model="model"
+                    :customActions="customActions"
+                  ></custom-actions>
+                </vuetable>
               </div>
             </div>
             <div class="row">
@@ -42,6 +50,9 @@
       </div>
     </div>
     <modal-basic :settings="createModalSettings"></modal-basic>
+    <div v-for="action in this.customActions" v-bind:key="action.id">
+      <modal-basic :settings="action"></modal-basic>
+    </div>
   </div>
 </template>
 
@@ -51,6 +62,7 @@ import VuetablePaginationBootstrap from "./Structure/VuetablePaginationBootstrap
 import FilterBar from "./Structure/Filter";
 import ButtonCreate from "./Structure/Buttons/Create";
 import ModalBasic from "./Structure/Modals/BasicModal";
+import CustomActions from "./Structure/Actions/CustomActions";
 
 export default {
   components: {
@@ -58,7 +70,8 @@ export default {
     VuetablePaginationBootstrap,
     FilterBar,
     ButtonCreate,
-    ModalBasic
+    ModalBasic,
+    CustomActions
   },
   props: {
     tableTitle: {
@@ -99,6 +112,14 @@ export default {
     createModalSettings: {
       type: Object,
       required: true
+    },
+    customActions: {
+      type: Array,
+      required: false
+    },
+    model: {
+      type: String,
+      required: false
     }
   },
   data() {
